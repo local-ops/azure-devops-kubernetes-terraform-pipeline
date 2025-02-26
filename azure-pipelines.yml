@@ -18,7 +18,7 @@ steps:
     command: 'init'
     workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
     backendServiceAWS: 'aws-rust-terraform-lession-1'
-    backendAWSBucketName: 'rust-terraform-lession-1'
+    backendAWSBucketName: 'rust-terraform-lession-us1'
     backendAWSKey: 'kubernetes-dev.tfstate'
 
 # validate
@@ -29,13 +29,13 @@ steps:
     command: 'validate'
 
 # plan
-- task: TerraformTaskV4@4
-  displayName: Terraform plan
-  inputs:
-    provider: 'aws'
-    command: 'plan'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-    environmentServiceNameAWS: 'aws-rust-terraform-lession-1'
+# - task: TerraformTaskV4@4
+#   displayName: Terraform plan
+#   inputs:
+#     provider: 'aws'
+#     command: 'plan'
+#     workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
+#     environmentServiceNameAWS: 'aws-rust-terraform-lession-1'
 
 # apply
 # - task: TerraformTaskV4@4
