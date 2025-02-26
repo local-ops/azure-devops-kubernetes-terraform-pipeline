@@ -10,7 +10,7 @@ steps:
   displayName: 'Run a one-line script'
 
 
-#init - backend
+# init - backend
 - task: TerraformTaskV4@4
   inputs:
     provider: 'aws'
@@ -19,4 +19,25 @@ steps:
     backendServiceAWS: 'aws-rust-terraform-lession-1'
     backendAWSBucketName: 'rust-terraform-lession-us1'
     backendAWSKey: 'kubernetes-dev.tfstate'
-#apply
+
+# validate
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'aws'
+    command: 'validate'
+
+# plan
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'aws'
+    command: 'plan'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
+    environmentServiceNameAWS: 'aws-rust-terraform-lession-1'
+
+# apply
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'aws'
+    command: 'apply'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
+    environmentServiceNameAWS: 'aws-rust-terraform-lession-1'
