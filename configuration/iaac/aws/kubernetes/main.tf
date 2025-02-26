@@ -40,7 +40,7 @@ module "in28minutes-cluster" {
   source  = "terraform-aws-modules/eks/aws"
   version = "19.15.3"
 
-  cluster_name    = "in28minutes-cluster"
+  cluster_name    = "in28minutes-cluster2"
   cluster_version = "1.29"
 
   subnet_ids         = ["subnet-098c6d8dfc5219693", "subnet-012819c48234aac76"] #CHANGE # Donot choose subnet from us-east-1e
