@@ -12,6 +12,7 @@ steps:
 
 # init - backend
 - task: TerraformTaskV4@4
+  displayName: Terraform Init
   inputs:
     provider: 'aws'
     command: 'init'
@@ -22,12 +23,14 @@ steps:
 
 # validate
 - task: TerraformTaskV4@4
+  displayName: Terraform validate
   inputs:
     provider: 'aws'
     command: 'validate'
 
 # plan
 - task: TerraformTaskV4@4
+  displayName: Terraform plan
   inputs:
     provider: 'aws'
     command: 'plan'
@@ -36,6 +39,7 @@ steps:
 
 # apply
 - task: TerraformTaskV4@4
+  displayName: Terraform apply
   inputs:
     provider: 'aws'
     command: 'apply'
