@@ -45,3 +45,10 @@ steps:
     command: 'apply'
     workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
     environmentServiceNameAWS: 'aws-rust-terraform-lession-1'
+
+# destroy
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'aws'
+    command: 'destroy'
+    environmentServiceNameAWS: 'aws-rust-terraform-lession-1'
