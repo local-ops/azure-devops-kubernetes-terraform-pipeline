@@ -17,8 +17,8 @@ steps:
     provider: 'aws'
     command: 'init'
     workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-    backendServiceAWS: 'aws-rust-terraform-lession-1'
-    backendAWSBucketName: 'rust-terraform-lession-us1'
+    backendServiceAWS: 'AWS-rust-tf-lession-eu'
+    backendAWSBucketName: 'rust-tf-lession-eu'
     backendAWSKey: 'kubernetes-dev.tfstate'
 
 # validate
@@ -35,7 +35,7 @@ steps:
 #     provider: 'aws'
 #     command: 'plan'
 #     workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-#     environmentServiceNameAWS: 'aws-rust-terraform-lession-1'
+#     environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
 
 # apply
 # - task: TerraformTaskV4@4
@@ -44,7 +44,7 @@ steps:
 #     provider: 'aws'
 #     command: 'apply'
 #     workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-#     environmentServiceNameAWS: 'aws-rust-terraform-lession-1'
+#     environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
 
 # destroy
 - task: TerraformTaskV4@4
@@ -52,4 +52,4 @@ steps:
   inputs:
     provider: 'aws'
     command: 'destroy'
-    environmentServiceNameAWS: 'aws-rust-terraform-lession-1'
+    environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
