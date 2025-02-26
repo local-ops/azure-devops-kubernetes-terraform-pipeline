@@ -17,6 +17,6 @@ steps:
     command: 'init'
     workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
     backendServiceAWS: 'aws-rust-terraform-lession-1'
-    backendAWSBucketName: 'rust-terraform-lession-us'
+    backendAWSBucketName: 'rust-terraform-lession-us1'
     backendAWSKey: 'kubernetes-dev.tfstate'
 #apply
