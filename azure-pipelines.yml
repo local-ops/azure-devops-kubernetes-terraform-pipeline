@@ -1,0 +1,22 @@
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+
+#init - backend
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'aws'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
+    backendServiceAWS: 'aws-rust-terraform-lession-1'
+    backendAWSBucketName: 'rust-terraform-lession-1'
+    backendAWSKey: 'kubernetes-dev.tfstate'
+#apply
