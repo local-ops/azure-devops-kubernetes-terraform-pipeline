@@ -19,11 +19,11 @@ resource "aws_default_vpc" "default" {
 
 ### Uncomment this section after cluster creation line numbers 25 to 31 ###
 data "aws_eks_cluster" "example" {
-  name = "in28minutes-cluster"
+  name = "in28minutes-cluster2"
 }
 
 data "aws_eks_cluster_auth" "example" {
- name = "in28minutes-cluster"
+ name = "in28minutes-cluster2"
 }
 ### Uncomment this section after cluster creation ###
 
