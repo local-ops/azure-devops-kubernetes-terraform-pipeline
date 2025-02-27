@@ -81,33 +81,40 @@ module "in28minutes-cluster" {
 
 }
 ### Uncomment this section after cluster creation line numbers 88 to 115###
-resource "kubernetes_cluster_role_binding" "example" {
- metadata {
-   name = "fabric8-rbac"
- }
- role_ref {
-   api_group = "rbac.authorization.k8s.io"
-   kind      = "ClusterRole"
-   name      = "cluster-admin"
- }
- subject {
-   kind      = "ServiceAccount"
-   name      = "default"
-   namespace = "default"
- }
+### Fetch EKS cluster details ###
+data "aws_eks_cluster" "example" {
+  name = module.in28minutes-cluster.cluster_name
 }
 
-resource "kubernetes_secret" "example" {
- metadata {
-   annotations = {
-     "kubernetes.io/service-account.name" = "default"
-   }
+data "aws_eks_cluster_auth" "example" {
+  name = module.in28minutes-cluster.cluster_name
+}
 
-   generate_name = "terraform-default-"
- }
+provider "kubernetes" {
+  host                   = data.aws_eks_cluster.example.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.example.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.example.token
+}
 
- type                           = "kubernetes.io/service-account-token"
- wait_for_service_account_token = true
+### **New: Create a Kubernetes ServiceAccount**
+resource "kubernetes_service_account" "sa" {
+  metadata {
+    name      = "my-service-account"
+    namespace = "default"
+  }
+}
+
+### **New: Create a Token Secret for the ServiceAccount**
+resource "kubernetes_secret" "sa_token" {
+  metadata {
+    name      = "my-service-account-token"
+    namespace = "default"
+    annotations = {
+      "kubernetes.io/service-account.name" = kubernetes_service_account.sa.metadata[0].name
+    }
+  }
+
+  type = "kubernetes.io/service-account-token"
 }
 ### Uncomment this section after cluster creation ###
 

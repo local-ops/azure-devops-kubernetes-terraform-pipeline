@@ -1,3 +1,13 @@
+# config
+Install aws
+- aws configure
+- aws eks --region eu-central-1 update-kubeconfig --name=in28minutes-cluster
+
+Add service connection to Azure DevOps
+- kubectl cluster-info
+- kubectl get serviceaccounts
+
+
 # Currency Exchange Micro Service - H2
 
 Run com.in28minutes.microservices.currencyconversionservice.CurrencyConversionServiceApplicationH2 as a Java Application.
