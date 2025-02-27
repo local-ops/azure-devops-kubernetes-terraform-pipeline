@@ -38,19 +38,19 @@ steps:
 #     environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
 
 # apply
-- task: TerraformTaskV4@4
-  displayName: Terraform apply
-  inputs:
-    provider: 'aws'
-    command: 'apply'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-    environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
+#- task: TerraformTaskV4@4
+#  displayName: Terraform apply
+#  inputs:
+#    provider: 'aws'
+#    command: 'apply'
+#    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
+#    environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
 
 # destroy
-# - task: TerraformTaskV4@4
-#   displayName: Terraform destroy
-#   inputs:
-#     provider: 'aws'
-#     command: 'destroy'
-#     workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-#     environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
+- task: TerraformTaskV4@4
+  displayName: Terraform destroy
+  inputs:
+    provider: 'aws'
+    command: 'destroy'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
+    environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
