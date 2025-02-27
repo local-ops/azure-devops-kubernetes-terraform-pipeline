@@ -81,34 +81,34 @@ module "in28minutes-cluster" {
 
 }
 ### Uncomment this section after cluster creation line numbers 88 to 115###
-#resource "kubernetes_cluster_role_binding" "example" {
-#  metadata {
-#    name = "fabric8-rbac"
-#  }
-#  role_ref {
-#    api_group = "rbac.authorization.k8s.io"
-#    kind      = "ClusterRole"
-#    name      = "cluster-admin"
-#  }
-#  subject {
-#    kind      = "ServiceAccount"
-#    name      = "default"
-#    namespace = "default"
-#  }
-# }
+resource "kubernetes_cluster_role_binding" "example" {
+ metadata {
+   name = "fabric8-rbac"
+ }
+ role_ref {
+   api_group = "rbac.authorization.k8s.io"
+   kind      = "ClusterRole"
+   name      = "cluster-admin"
+ }
+ subject {
+   kind      = "ServiceAccount"
+   name      = "default"
+   namespace = "default"
+ }
+}
 
-#resource "kubernetes_secret" "example" {
-#  metadata {
-#    annotations = {
-#      "kubernetes.io/service-account.name" = "default"
-#    }
-#
-#    generate_name = "terraform-default-"
-#  }
-#
-#  type                           = "kubernetes.io/service-account-token"
-#  wait_for_service_account_token = true
-# }
+resource "kubernetes_secret" "example" {
+ metadata {
+   annotations = {
+     "kubernetes.io/service-account.name" = "default"
+   }
+
+   generate_name = "terraform-default-"
+ }
+
+ type                           = "kubernetes.io/service-account-token"
+ wait_for_service_account_token = true
+}
 ### Uncomment this section after cluster creation ###
 
 # Needed to set the default region
