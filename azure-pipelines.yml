@@ -1,70 +1,73 @@
-
 trigger:
 - master
 
 pool:
   vmImage: ubuntu-latest
 
-# parameter um abzufragen ob apply oder destroy erstellt werden soll
 parameters:
-- name: terraformAction
-  displayName: 'Terraform Action'
+- name: terraformActionInfra
+  displayName: 'Terraform Action for Infra'
   type: string
   default: 'apply'
   values:
   - 'apply'
   - 'destroy'
 
-# parameter für action für kubernetes
 - name: terraformActionK8s
   displayName: 'Terraform Action for Kubernetes'
   type: string
-  default: 'deploy'
+  default: 'apply'
   values:
-  - 'deploy'
-  - 'delete'
-
+  - 'apply'
+  - 'destroy'
 
 stages:
-- stage: Build
-  displayName: Build image
+- stage: Infra
+  displayName: "Stage 1: EKS Infrastruktur"
   jobs:
   - job: TerraformInfra
-    displayName: "Terraform Infrastructure"
+    displayName: "Terraform - EKS Infrastruktur erstellen"
     steps:
     - script: echo "Starte Terraform für den EKS Cluster und Infrastruktur..."
       displayName: "Info: Start Infra Stage"
-
-
-  
-      # init - backend
+      
+    # Init – Backend für Infra (State-Datei z. B. 'eks-infra.tfstate')
     - task: TerraformTaskV4@4
-      displayName: Terraform Init
+      displayName: "Terraform Init (Infra)"
       inputs:
         provider: 'aws'
         command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/eks-infra'
         backendServiceAWS: 'AWS-rust-tf-lession-eu'
         backendAWSBucketName: 'rust-tf-lession-eu'
-        backendAWSKey: 'kubernetes-dev.tfstate'
-
-    # validate
+        backendAWSKey: 'eks-infra.tfstate'
+        
+    # Validate
     - task: TerraformTaskV4@4
-      displayName: Terraform validate
+      displayName: "Terraform Validate (Infra)"
       inputs:
         provider: 'aws'
         command: 'validate'
-
-    # apply
+        workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/eks-infra'
+        
+    # Plan
     - task: TerraformTaskV4@4
-      displayName: Terraform ${{parameters.terraformAction}}
+      displayName: "Terraform Plan (Infra)"
       inputs:
         provider: 'aws'
-        command: '${{parameters.terraformAction}}'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/eks-infra'
+        environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
+        
+    # Apply oder Destroy basierend auf Parameter
+    - task: TerraformTaskV4@4
+      displayName: "Terraform ${{ parameters.terraformActionInfra }} (Infra)"
+      inputs:
+        provider: 'aws'
+        command: '${{ parameters.terraformActionInfra }}'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/eks-infra'
         environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
 
-# stage deploy token on kubernetes
 - stage: Kubernetes
   displayName: "Stage 2: Kubernetes Ressourcen konfigurieren"
   dependsOn: Infra
@@ -111,5 +114,3 @@ stages:
         command: '${{ parameters.terraformActionK8s }}'
         workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/eks-k8s'
         environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
-
-# stage deploy app on kubernetes
