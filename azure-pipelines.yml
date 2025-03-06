@@ -5,6 +5,16 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+# parameter um abzufragen ob apply oder destroy erstellt werden soll
+parameters:
+- name: terraformAction
+  displayName: 'Terraform Action'
+  type: string
+  default: 'apply'
+  values:
+  - 'apply'
+  - 'destroy'
+
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
@@ -38,19 +48,19 @@ steps:
 #     environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
 
 # apply
-#- task: TerraformTaskV4@4
-#  displayName: Terraform apply
-#  inputs:
-#    provider: 'aws'
-#    command: 'apply'
-#    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-#    environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
+- task: TerraformTaskV4@4
+ displayName: Terraform ${{parameters.terraformAction}}
+ inputs:
+   provider: 'aws'
+   command: '${{parameters.terraformAction}}'
+   workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
+   environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
 
 # destroy
-- task: TerraformTaskV4@4
-  displayName: Terraform destroy
-  inputs:
-    provider: 'aws'
-    command: 'destroy'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-    environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
+# - task: TerraformTaskV4@4
+#   displayName: Terraform destroy
+#   inputs:
+#     provider: 'aws'
+#     command: 'destroy'
+#     workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
+#     environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
