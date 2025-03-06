@@ -15,6 +15,5 @@ output "cluster_name" {
 
 # cluster auth_token
 output "cluster_auth_token" {
- value
- = module.in28minutes-cluster.cluster_auth_token
+ value = module.in28minutes-cluster.cluster_auth_token
 }
