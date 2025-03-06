@@ -16,7 +16,6 @@ parameters:
   - 'destroy'
 
 # parameter für action für kubernetes
-parameters:
 - name: terraformActionK8s
   displayName: 'Terraform Action for Kubernetes'
   type: string
