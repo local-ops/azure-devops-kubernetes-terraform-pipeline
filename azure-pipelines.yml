@@ -49,12 +49,12 @@ steps:
 
 # apply
 - task: TerraformTaskV4@4
- displayName: Terraform ${{parameters.terraformAction}}
- inputs:
-   provider: 'aws'
-   command: '${{parameters.terraformAction}}'
-   workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-   environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
+  displayName: Terraform ${{parameters.terraformAction}}
+  inputs:
+    provider: 'aws'
+    command: '${{parameters.terraformAction}}'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
+    environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
 
 # destroy
 # - task: TerraformTaskV4@4
