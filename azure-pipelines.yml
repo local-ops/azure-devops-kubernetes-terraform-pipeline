@@ -15,52 +15,102 @@ parameters:
   - 'apply'
   - 'destroy'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+# parameter für action für kubernetes
+parameters:
+- name: terraformActionK8s
+  displayName: 'Terraform Action for Kubernetes'
+  type: string
+  default: 'deploy'
+  values:
+  - 'deploy'
+  - 'delete'
 
 
-# init - backend
-- task: TerraformTaskV4@4
-  displayName: Terraform Init
-  inputs:
-    provider: 'aws'
-    command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-    backendServiceAWS: 'AWS-rust-tf-lession-eu'
-    backendAWSBucketName: 'rust-tf-lession-eu'
-    backendAWSKey: 'kubernetes-dev.tfstate'
+stages:
+- stage: Build
+  displayName: Build image
+  jobs:
+  - job: TerraformInfra
+    displayName: "Terraform Infrastructure"
+    steps:
+    - script: echo "Starte Terraform für den EKS Cluster und Infrastruktur..."
+      displayName: "Info: Start Infra Stage"
 
-# validate
-- task: TerraformTaskV4@4
-  displayName: Terraform validate
-  inputs:
-    provider: 'aws'
-    command: 'validate'
 
-# plan
-# - task: TerraformTaskV4@4
-#   displayName: Terraform plan
-#   inputs:
-#     provider: 'aws'
-#     command: 'plan'
-#     workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-#     environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
+  
+      # init - backend
+    - task: TerraformTaskV4@4
+      displayName: Terraform Init
+      inputs:
+        provider: 'aws'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
+        backendServiceAWS: 'AWS-rust-tf-lession-eu'
+        backendAWSBucketName: 'rust-tf-lession-eu'
+        backendAWSKey: 'kubernetes-dev.tfstate'
 
-# apply
-- task: TerraformTaskV4@4
-  displayName: Terraform ${{parameters.terraformAction}}
-  inputs:
-    provider: 'aws'
-    command: '${{parameters.terraformAction}}'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-    environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
+    # validate
+    - task: TerraformTaskV4@4
+      displayName: Terraform validate
+      inputs:
+        provider: 'aws'
+        command: 'validate'
 
-# destroy
-# - task: TerraformTaskV4@4
-#   displayName: Terraform destroy
-#   inputs:
-#     provider: 'aws'
-#     command: 'destroy'
-#     workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-#     environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
+    # apply
+    - task: TerraformTaskV4@4
+      displayName: Terraform ${{parameters.terraformAction}}
+      inputs:
+        provider: 'aws'
+        command: '${{parameters.terraformAction}}'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
+        environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
+
+# stage deploy token on kubernetes
+- stage: Kubernetes
+  displayName: "Stage 2: Kubernetes Ressourcen konfigurieren"
+  dependsOn: Infra
+  jobs:
+  - job: TerraformK8s
+    displayName: "Terraform - Kubernetes Ressourcen erstellen"
+    steps:
+    - script: echo "Starte Terraform für die Kubernetes-Ressourcen (ClusterRoleBinding, Secret, etc.)..."
+      displayName: "Info: Start Kubernetes Stage"
+      
+    # Init – Backend für K8s (State-Datei z. B. 'eks-k8s.tfstate')
+    - task: TerraformTaskV4@4
+      displayName: "Terraform Init (K8s)"
+      inputs:
+        provider: 'aws'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/eks-k8s'
+        backendServiceAWS: 'AWS-rust-tf-lession-eu'
+        backendAWSBucketName: 'rust-tf-lession-eu'
+        backendAWSKey: 'eks-k8s.tfstate'
+        
+    # Validate
+    - task: TerraformTaskV4@4
+      displayName: "Terraform Validate (K8s)"
+      inputs:
+        provider: 'aws'
+        command: 'validate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/eks-k8s'
+        
+    # Plan
+    - task: TerraformTaskV4@4
+      displayName: "Terraform Plan (K8s)"
+      inputs:
+        provider: 'aws'
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/eks-k8s'
+        environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
+        
+    # Apply oder Destroy basierend auf Parameter
+    - task: TerraformTaskV4@4
+      displayName: "Terraform ${{ parameters.terraformActionK8s }} (K8s)"
+      inputs:
+        provider: 'aws'
+        command: '${{ parameters.terraformActionK8s }}'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/eks-k8s'
+        environmentServiceNameAWS: 'AWS-rust-tf-lession-eu'
+
+# stage deploy app on kubernetes
