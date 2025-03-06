@@ -1,19 +1,15 @@
-# cluster endpoint
 output "cluster_endpoint" {
- value = module.in28minutes-cluster.cluster_endpoint
+  value = data.aws_eks_cluster.example.endpoint
 }
 
-# cluster certificate authority
 output "cluster_certificate_authority" {
- value = module.in28minutes-cluster.cluster_certificate_authority
-}   
+  value = data.aws_eks_cluster.example.certificate_authority[0].data
+}
 
-# cluster name
 output "cluster_name" {
- value = module.in28minutes-cluster.cluster_name
-}   
+  value = module.in28minutes-cluster.cluster_id
+}
 
-# cluster auth_token
 output "cluster_auth_token" {
- value = module.in28minutes-cluster.cluster_auth_token
+  value = data.aws_eks_cluster_auth.example.token
 }
