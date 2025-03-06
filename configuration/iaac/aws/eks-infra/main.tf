@@ -56,9 +56,9 @@ module "in28minutes-cluster" {
 
 # Datenquelle, um den Cluster-Zustand abzurufen
 data "aws_eks_cluster" "example" {
-  name = module.in28minutes-cluster.cluster_id
+  name = module.in28minutes-cluster.cluster_name
 }
 
 data "aws_eks_cluster_auth" "example" {
-  name = module.in28minutes-cluster.cluster_id
+  name = module.in28minutes-cluster.cluster_name
 }
